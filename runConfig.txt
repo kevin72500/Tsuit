@@ -1,0 +1,4 @@
+#default port 5000
+export FLASK_APP=Tsuit.py
+export FLASK_DEBUG=1
+flask run

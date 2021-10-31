@@ -1,0 +1,52 @@
+{% extends "bootstrap/base.html" %}
+{% block title %} index{% endblock %}
+{% block navbar %}
+    
+{% endblock navbar %}
+
+{%block head %}
+{{super()}}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang("zh-CN") }}
+{% endblock scripts %}
+
+ <style>
+
+ </style>
+ {%endblock%}
+ {%block body%}
+{% block navibar %}
+    <div class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class='navbar-brand' href='/'>Tsuit</a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class='sr-only'>Toggle navigation</span>
+                    <span class='icon-bar'></span>
+                    <span class='icon-bar'></span>
+                    <span class='icon-bar'></span>
+                </button>
+            </div>
+            <div class='navbar-collapse collapse'>
+                <ul class='nav navbar-nav'>
+                    <li><a href='/'>首页</a></li>
+                </ul>
+                <ul class='nav navbar-nav'>
+                    <li><a href='/'>工具</a></li>
+                </ul>
+                <ul class='nav navbar-nav'>
+                    <li><a href='/'>混沌</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock navibar %}
+<h1>Hello World!</h1>
+<h2>local date and time is : {{ moment(cur_time).format('LLL') }}</h2>
+<h2>that was {{ moment(cur_time).fromNow(refresh=True) }}</h2>
+{%endblock%}
+
+
