@@ -49,7 +49,7 @@ def login():
         print(name,password)
         form.name.data=''
         form.password.data=''
-    return render_template('login.html',form=form)
+    return render_template('login.html',form=form,name=name)
 
 
 @app.errorhandler(404)
