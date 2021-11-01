@@ -1,3 +1,4 @@
+#encoding:utf-8
 from flask import Flask
 from flask import request
 from flask import make_response
@@ -8,6 +9,9 @@ from flask_moment import Moment
 from datetime import datetime
 import flask_wtf
 from form import LoginForm
+
+from flask import session, url_for
+from flask import flash
 
 from flask_bootstrap import Bootstrap
 app=Flask(__name__)
@@ -44,12 +48,16 @@ def login():
     password=None
     form=LoginForm()
     if form.validate_on_submit():
-        name=form.name.data
-        password=form.password.data
-        print(name,password)
+        old_name=session.get('name')
+        if old_name is not None and old_name !=form.name.data:
+            flash('you have changed your name')
+        session['name']=form.name.data
+        session['password']=form.password.data
+        return redirect(url_for('login'))
+        # print(name,password)
         form.name.data=''
         form.password.data=''
-    return render_template('login.html',form=form,name=name)
+    return render_template('login.html',form=form,name=session.get('name'))
 
 
 @app.errorhandler(404)
