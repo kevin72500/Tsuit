@@ -2,14 +2,26 @@
 <html>
     <head>
         {% block head %}
+        {{ super() }}
         <title>
             {% block title %}
+            {{ super() }}
             {% endblock %}
         </title>
         {% endblock %}
     </head>
     <body>
-        {% block body %}
-        {% endblock %}
+        {% block content %}
+            {{ super() }}
+            <div class='container'>
+                {% for message in get_flashed_messages() %}
+                    <div class='alert alert-warning'>
+                        <button type='button' class='close' data-dismiss='alert'>&times;</button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+            
+        {% endblock content %}
     </body>
 </html>
