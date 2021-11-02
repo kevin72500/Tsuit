@@ -25,7 +25,7 @@ bootstrap=Bootstrap(app)
 moment=Moment(app)
 
 app.config['SECRET_KEY']='my first app'
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:////'+os.path.join(basedir,'data.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:////'+os.path.join(basedir,'data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 db=SQLAlchemy(app)
 
@@ -44,7 +44,7 @@ class User(db.Model):
     tablename='users'
     id=db.Column(db.Integer,primary_key=True)
     username=db.Column(db.String(64),unique=True,index=True)
-    rold_id=db.Column(db.Integer,db.ForeignKey('roles.id'))
+    role_id=db.Column(db.Integer,db.ForeignKey('role.id'))
     def repr(self):
         return '<User %r>' % self.username
 
