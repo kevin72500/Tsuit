@@ -17,6 +17,8 @@ from flask_bootstrap import Bootstrap
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
 
 basedir=os.path.abspath(os.path.dirname('Tsuit.py'))
 
@@ -29,13 +31,14 @@ app.config['SQLALCHEMY_DATABASE_URI']='sqlite:////'+os.path.join(basedir,'data.d
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 db=SQLAlchemy(app)
 
+migrate=Migrate(app,db)
 
 
 class Role(db.Model):
     tablename='roles'
     id=db.Column(db.Integer,primary_key=True)
     name=db.Column(db.String(64),unique=True)
-    users=db.relationship('User',backref='role')
+    users=db.relationship('User',backref='role',lazy='dynamic')
     def repr(self):
         return '<Role %r>' % self.name
 
@@ -79,16 +82,31 @@ def login():
     password=None
     form=LoginForm()
     if form.validate_on_submit():
-        old_name=session.get('name')
-        if old_name is not None and old_name !=form.name.data:
-            flash('you have changed your name')
+        user=User.query.filter_by(username=form.name.data).first()
+        if user is None:
+            user =User(username=form.name.data)
+            db.session.add(user)
+            db.session.commit()
+            session['known']=False
+        else:
+            session['known']=True
+
         session['name']=form.name.data
         session['password']=form.password.data
-        return redirect(url_for('login'))
-        # print(name,password)
-        form.name.data=''
+        form.name.data=""
         form.password.data=''
-    return render_template('login.html',form=form,name=session.get('name'))
+        return redirect(url_for('login'))
+    return render_template('login.html',form=form,name=session.get('name'),known=session.get('known',False))
+    #     old_name=session.get('name')
+    #     if old_name is not None and old_name !=form.name.data:
+    #         flash('you have changed your name')
+    #     session['name']=form.name.data
+    #     session['password']=form.password.data
+    #     return redirect(url_for('login'))
+    #     # print(name,password)
+    #     form.name.data=''
+    #     form.password.data=''
+    # return render_template('login.html',form=form,name=session.get('name'))
 
 
 @app.errorhandler(404)
@@ -98,6 +116,13 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_error(e):
     return render_template('500.html')
+
+
+@app.shell_context_processor
+def make_shell_context():
+    return dict(db=db,User=User,Role=Role)
+
+
 
 
 
